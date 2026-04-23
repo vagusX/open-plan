@@ -1,32 +1,45 @@
 {
   "name": "open-plan",
   "version": "0.1.0",
-  "description": "Local markdown review CLI with TipTap editor and XML export",
+  "description": "Local plan index + markdown review CLI with TipTap editor, inline comments, and XML export",
+  "keywords": [
+    "plan",
+    "markdown",
+    "review",
+    "tiptap",
+    "claude-code",
+    "cli",
+    "frontmatter"
+  ],
+  "author": "vagusX <vagusxl@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/vagusX/open-plan#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vagusX/open-plan.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vagusX/open-plan/issues"
+  },
   "bin": {
     "open-plan": "dist/cli.js"
   },
+  "files": [
+    "dist",
+    "public",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "bun run build.ts && bun run src/cli.ts",
     "build": "bun run build.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "prepublishOnly": "bun run build.ts && bun test"
   },
   "dependencies": {
-    "diff": "^5.1.0",
-    "nanoid": "^5.0.7",
-    "open": "^10.1.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "tiptap-markdown": "^0.8.10"
+    "open": "^10.1.0"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/diff": "^5.2.1",
-    "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
     "@tiptap/core": "^2.7.0",
     "@tiptap/extension-bold": "^2.7.0",
     "@tiptap/extension-bullet-list": "^2.7.0",
@@ -46,6 +59,20 @@
     "@tiptap/extension-text": "^2.7.0",
     "@tiptap/pm": "^2.7.0",
     "@tiptap/react": "^2.7.0",
-    "@tiptap/starter-kit": "^2.7.0"
+    "@tiptap/starter-kit": "^2.7.0",
+    "@types/bun": "latest",
+    "@types/diff": "^5.2.1",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "diff": "^5.1.0",
+    "nanoid": "^5.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.14",
+    "tiptap-markdown": "^0.8.10",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
   }
 }

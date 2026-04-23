@@ -5,18 +5,56 @@ import { startServer } from './server';
 import openBrowser from 'open';
 import { resolveScanDirs } from './utils/scan';
 import { deleteLock, probeServer, readLock, writeLock } from './utils/lock';
+import pkg from '../package.json' with { type: 'json' };
+
+const HELP = `open-plan — local plan index + markdown review CLI
+
+Usage:
+  open-plan                     打开索引页（扫 ~/.claude/plans/ + cwd 下的 plans/）
+  open-plan <file.md>           直接打开某个 plan 开始 review
+  open-plan [options]
+
+Options:
+  -p, --port <port>             指定端口（默认 0 = 随机可用端口）
+  -i, --index                   强制索引模式（即使传了文件）
+      --fresh                   跳过复用已有 server，起全新实例
+      --no-open                 不自动打开浏览器
+  -h, --help                    显示本帮助
+  -v, --version                 显示版本号
+
+Docs: ${pkg.homepage ?? pkg.repository?.url ?? ''}
+`;
 
 async function main() {
-  const { positionals, values } = parseArgs({
-    args: Bun.argv.slice(2),
-    allowPositionals: true,
-    options: {
-      port: { type: 'string', short: 'p' },
-      'no-open': { type: 'boolean', default: false },
-      index: { type: 'boolean', short: 'i' },
-      fresh: { type: 'boolean', default: false },
-    },
-  });
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args: Bun.argv.slice(2),
+      allowPositionals: true,
+      options: {
+        port: { type: 'string', short: 'p' },
+        'no-open': { type: 'boolean', default: false },
+        index: { type: 'boolean', short: 'i' },
+        fresh: { type: 'boolean', default: false },
+        help: { type: 'boolean', short: 'h', default: false },
+        version: { type: 'boolean', short: 'v', default: false },
+      },
+    });
+  } catch (err) {
+    console.error((err as Error).message);
+    console.error('\n' + HELP);
+    process.exit(2);
+  }
+  const { positionals, values } = parsed;
+
+  if (values.help) {
+    console.log(HELP);
+    return;
+  }
+  if (values.version) {
+    console.log(pkg.version);
+    return;
+  }
 
   const filePath = positionals[0];
   const wantsIndex = !filePath || values.index;

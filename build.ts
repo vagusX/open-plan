@@ -22,6 +22,7 @@ const cliResult = await Bun.build({
   target: 'bun',
   minify: true,
   external: ['open'],
+  banner: '#!/usr/bin/env bun',
 });
 
 if (!cliResult.success) {
@@ -31,5 +32,10 @@ if (!cliResult.success) {
   }
   process.exit(1);
 }
+
+// npm preserves the executable bit from the tarball; set it so `open-plan`
+// works directly when consumers install globally.
+import { chmodSync } from 'fs';
+chmodSync('dist/cli.js', 0o755);
 
 console.log('CLI built to dist/cli.js');
