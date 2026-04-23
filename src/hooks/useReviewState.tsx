@@ -1,7 +1,9 @@
 import { createContext, useContext, useReducer, type ReactNode } from 'react';
 import type { Comment, ReviewState } from '../types';
+import { parseFrontmatter } from '../utils/frontmatter';
 
 interface ReviewContextValue extends ReviewState {
+  filePath: string;
   setMarkdown: (md: string) => void;
   addComment: (comment: Omit<Comment, 'id'>) => void;
   updateComment: (id: string, text: string) => void;
@@ -48,14 +50,21 @@ export function ReviewStateProvider({
   filePath: string;
   children: ReactNode;
 }) {
+  // Strip the YAML frontmatter before handing content to TipTap — it would
+  // otherwise get rendered as a squashed paragraph (newlines inside a paragraph
+  // collapse to spaces). `original` tracks the body too so the XML diff stays
+  // clean when the user hasn't edited anything.
+  const { fm, body } = parseFrontmatter(initialMd);
   const [state, dispatch] = useReducer(reducer, {
-    original: initialMd,
-    markdown: initialMd,
+    original: body,
+    markdown: body,
     comments: [],
+    frontmatter: fm,
   });
 
   const value: ReviewContextValue = {
     ...state,
+    filePath,
     setMarkdown: (md: string) => dispatch({ type: 'SET_MARKDOWN', payload: md }),
     addComment: (comment: Omit<Comment, 'id'>) => {
       const id = `c${state.comments.length + 1}`;

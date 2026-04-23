@@ -1,23 +1,32 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './components/App';
+import { PlanIndex } from './components/PlanIndex';
 import { ReviewStateProvider } from './hooks/useReviewState';
+
+type Init =
+  | { mode: 'edit'; md: string; filePath: string }
+  | { mode: 'index' };
 
 declare global {
   interface Window {
-    __INIT__: { md: string; filePath: string };
+    __INIT__: Init;
   }
 }
 
-const { md, filePath } = window.__INIT__;
+const init = window.__INIT__;
 
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
 root.render(
   <StrictMode>
-    <ReviewStateProvider initialMd={md} filePath={filePath}>
-      <App />
-    </ReviewStateProvider>
+    {init.mode === 'index' ? (
+      <PlanIndex />
+    ) : (
+      <ReviewStateProvider initialMd={init.md} filePath={init.filePath}>
+        <App />
+      </ReviewStateProvider>
+    )}
   </StrictMode>
 );
